@@ -248,12 +248,7 @@ function create() {
   
  
 
-  particles = this.add.particles("particle");
-  emitter = particles.createEmitter({
-    speed: 10,
-    scale: { start: 0.5, end: 0.01 },
-    blendMode: "ADD",
-  });
+  
 
   boostAmountText = this.add.text(
     config.width - 200,
@@ -274,6 +269,7 @@ circle.body.setCircle(circle.radius);
 this.add.existing(circle);
  
   ball = this.physics.add.image(450, 450, "ball");
+  ball.setScale(1.3)
   ballCanShoot = false;
 
   ball.setTint(0xff0000); // set ball to red
