@@ -69,7 +69,8 @@ let ship2;
 let topWall;
 let bottomWall;
 let graphics;
-
+let post;
+let post2;
 let plasma;
 let bottomrofl;
 let leftWall;
@@ -79,6 +80,7 @@ let bottomWall2;
 let leftWall2;
 let laser;
 let rightWall2;
+let goal
 let boostAmountText;
 let ball;
 let score1 = 0;
@@ -138,6 +140,9 @@ function preload() {
 }
 
 function create() {
+
+
+
   x = this.input.keyboard.addKey(
     Phaser.Input.Keyboard.KeyCodes.SHIFT
     // Enable boost mode
@@ -157,22 +162,23 @@ function create() {
  this.background2.setOrigin(0, 0);
  this.background2.setTilePosition(0, 0);
  this.input.setDefaultCursor("crosshair");
- const background2 = this.add.image(450, 450, "pixel");
- const background3 = this.add.image(450, 450, "pixel");
- const background4 = this.add.image(450, 450, "observor");
- const background = this.add.image(450, 450, "background");
- background.setScale(
-   this.game.config.width / background.width,
-   this.game.config.height / background.height
- );
- background2.setScale(0.3)
- background3.setScale(0.3)
- background4.setScale(0.5)
- background.setAlpha(0.45);
- 
+ this.graphics = this.add.graphics();
+ this.graphics.lineStyle(5, 0x9400D3, 1);
+ this.graphics.beginPath();
+ this.graphics.moveTo(50, 50);
+ this.graphics.lineTo(config.width-50, 50);
+ this.graphics.closePath();
+ this.graphics.stroke();
 
 
 
+ this.graphics = this.add.graphics();
+ this.graphics.lineStyle(5, 0x9400D3, 1);
+ this.graphics.beginPath();
+ this.graphics.moveTo(50, config.height - 50);
+ this.graphics.lineTo(config.width-50, config.height - 50);
+ this.graphics.closePath();
+ this.graphics.stroke();
 
 
  scoreText1 = this.add.text(16, 16, "Ship 1: 0", {
@@ -185,42 +191,67 @@ function create() {
    fill: "#FFF",
  });
  scoreText2.setText(`Pixelstuds: ${score2}`);
-
+ this.graphics = this.add.graphics();
+ this.graphics.lineStyle(5, 0x9400D3, 1);
+ this.graphics.beginPath();
+ this.graphics.moveTo(config.width/2, 50);
+ this.graphics.lineTo(config.width/2, config.height -50);
+ this.graphics.closePath();
+ this.graphics.stroke();
  // set the size of the wall images
- 
- ship1 = this.physics.add.image(700, 700, "left");
- 
+ this.graphics = this.add.graphics();
+this.graphics.fillStyle(0x9400D3, 1);
+this.graphics.lineStyle(5, 0x9400D3, 4);
+this.graphics.beginPath();
+this.graphics.arc(config.width/2, config.height/2, 100, 0, Math.PI * 2);
+this.graphics.closePath();
+this.graphics.stroke();
+this.graphics = this.add.graphics();
+this.graphics.lineStyle(5, 0x9400D3, 1);
+this.graphics.beginPath();
+this.graphics.moveTo(config.width-50 , 50);
+this.graphics.lineTo(config.width -50, config.height -50);
+this.graphics.closePath();
+this.graphics.stroke();
+this.graphics = this.add.graphics();
+this.graphics.lineStyle(5, 0x9400D3, 1);
+this.graphics.beginPath();
+this.graphics.moveTo(50, 50);
+this.graphics.lineTo(50, config.height-50);
+this.graphics.closePath();
+this.graphics.stroke();
 
 
- ship1.setScale(1);
+
+
+
+ 
+ship1 = this.physics.add.image(700, 700, "observor");
+post = this.physics.add.image(config.width-20, config.height/2+80, 'wall');
+post2 = this.physics.add.image(config.width-20, config.height/2-80, 'wall');
+goal = this.physics.add.image(config.width-15, config.height/2-53, 'goal');
+goal = this.physics.add.image(config.width-15, config.height/2-20, 'goal');
+goal = this.physics.add.image(config.width-15, config.height/2+13, 'goal');
+goal = this.physics.add.image(config.width-15, config.height/2+46, 'goal');
+goal.setAlpha(0.6)
+post.setBounce(1)
+post.setImmovable(true)
+post2.setBounce(1)
+post2.setImmovable(true)
+
+
+ ship1.setScale(0.35);
  ship1.setCollideWorldBounds(true);
  ship1.setBounce(1);
  ship1.setDamping(2);
- ship2 = this.physics.add.image(250, 250, "ship2");
- ship2.setScale(0.55);
- ship2.setCollideWorldBounds(true);
- ship2.setBounce(1);
- ship1.body.setDrag(0.9);
- ship2.body.setDrag(0.9);
- ship3 = this.physics.add.image(0, 0, "ship3");
- ship3.setScale(0.55);
- ship3.setCollideWorldBounds(true);
- ship3.setBounce(1);
- ship3.body.setDrag(0.9);
- ship3.body.setDrag(0.9);
+ ship1.setCircle(60)
+
  
  this.physics.collide(ship1, topWall);
  this.physics.collide(ship1, bottomrofl);
  this.physics.collide(ship1, leftWall);
  this.physics.collide(ship1, rightWall);
- this.physics.collide(ship2, topWall);
- this.physics.collide(ship2, bottomrofl);
- this.physics.collide(ship2, leftWall);
- this.physics.collide(ship2, rightWall);
- this.physics.collide(ship3, topWall);
- this.physics.collide(ship3, bottomrofl);
- this.physics.collide(ship3, leftWall);
- this.physics.collide(ship3, rightWall);
+
 
  plasma = this.physics.add.image("plasma");
  
@@ -228,13 +259,6 @@ function create() {
 
  
 
- boostAmountText = this.add.text(
-   config.width - 200,
-   config.height - 50,
-   `Boost: ${Math.round(boostAmount)}`,
-   { fontSize: "16px", fill: "#FFFFFF" }
- );
- 
 
 
  // draw a circle on the graphics object
@@ -247,8 +271,10 @@ circle.body.setCircle(circle.radius);
 this.add.existing(circle);
 
  ball = this.physics.add.image(450, 450, "ball");
- ball.setScale(1)
+ ball.setScale(1.25)
  ballCanShoot = false;
+ ball.setCircle(10)
+
 
 
  ball.setTint(0xff0000); // set ball to red
@@ -258,7 +284,7 @@ this.add.existing(circle);
  }, 3500);
 
  ball.setCollideWorldBounds(true);
- ball.setBounce(0.7); // make the ball bounce off the walls
+ ball.setBounce(0.7) // make the ball bounce off the walls
  ball.body.onWorldBounds = function (ball) {
    console.log("Game object has collided with world bounds!");
    this.sound.play("ballcol1", { volume: 0.1 });
@@ -288,10 +314,18 @@ this.add.existing(circle);
 
 
 
+
+
 }
 
 function update() {
-  
+  this.physics.collide(ship1, post);
+  this.physics.collide(ship1, post2);
+  this.physics.collide(post, ball);
+  this.physics.collide(post2, ball);
+  let shiftKey = this.input.keyboard.addKey(
+    Phaser.Input.Keyboard.KeyCodes.SHIFT
+  );
 
   
   shipCircle = new Phaser.Geom.Circle(ship1.x, ship1.y, ship1.width / 2);
@@ -309,7 +343,7 @@ function update() {
 });
 
 this.physics.add.collider(ball, ship1, function () {
-  if (x.isDown) {
+  if (shiftKey.isDown) {
     let angle = Phaser.Math.Angle.Between(ship1.x, ship1.y, ball.x, ball.y);
     angle += Math.PI;  // add 180 degrees to the angle to make it opposite direction
     ball.body.setVelocity(-Math.cos(angle) * 100, -Math.sin(angle) * 100);
@@ -384,27 +418,11 @@ this.physics.add.collider(ball, ship1, function () {
   this.physics.collide(ship1, bottomrofl);
   this.physics.collide(ship1, leftWall);
   this.physics.collide(ship1, rightWall);
-  this.physics.collide(ship2, topWall);
-  this.physics.collide(ship2, bottomrofl);
-  this.physics.collide(ship2, leftWall);
-  this.physics.collide(ship2, rightWall);
-  this.physics.collide(ship3, topWall);
-  this.physics.collide(ship3, bottomrofl);
-  this.physics.collide(ship3, leftWall);
-  this.physics.collide(ship3, rightWall);
+;
 
-  boostRegenTimer += this.time.elapsed;
-  if (boostAmount < 200) {
-    boostAmount += 0.2;
-    boostAmountText.setText(`Boost: ${boostAmount}`); // update the boost amount text
-    boostRegenTimer = 0;
-  }
-  const boostSpeed = 400;
-  const boostStrength = 2;
+;
 
-  let shiftKey = this.input.keyboard.addKey(
-    Phaser.Input.Keyboard.KeyCodes.SHIFT
-  );
+
 
   let wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
   let aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -415,11 +433,11 @@ this.physics.add.collider(ball, ship1, function () {
 
   if (wKey.isDown && shipmoving) {
     ship1.setVelocityY(-100);
-    ship1.setTexture('up');
+  
   
 } else if (sKey.isDown && shipmoving) {
     ship1.setVelocityY(100);
-    ship1.setTexture('down');
+   
    
 } else {
     ship1.setVelocityY(0);
@@ -430,12 +448,12 @@ if (aKey.isDown && shipmoving) {
   loffset = true
   ship1.setVelocityX(-100);
   
-  ship1.setTexture('left');
+ 
 
 
 } else if (dKey.isDown && shipmoving) {
   ship1.setVelocityX(100);
-  ship1.setTexture('right');
+  
  
 } else {
   ship1.setVelocityX(0);
