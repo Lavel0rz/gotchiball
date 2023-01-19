@@ -2,8 +2,8 @@ import "phaser";
 
 const config = {
   type: Phaser.AUTO,
-  width: 900,
-  height: 900,
+  width: 1200,
+  height: 600,
   physics: {
     default: "arcade",
     arcade: {
@@ -19,6 +19,8 @@ const config = {
     mouse: true, // enable mouse input
   },
 };
+let x;
+let loffset = false
 let shipCircle
 let retainTimeout;
 let ballReachedProximity = false;
@@ -96,7 +98,7 @@ let boost = false; // variable to track the boost value
 const velocityX = 0;
 const velocityY = 0;
 function preload() {
-  this.load.image("ship", require("../src/observor.png"));
+  this.load.image("ship", require("../src/coderdan.png"));
   this.load.image("ship2", require("../src/coderdan.png"));
   this.load.image("ship3", require("../src/goldenxross.png"));
 
@@ -116,6 +118,10 @@ function preload() {
   this.load.image("arrow", require("../src/ghsttok.png"));
   this.load.image("arrow2", require("../src/ghsttok.png"));
   this.load.image("background2", require("../src/background2.png"));
+  this.load.image("down", require("../src/downsvg.png"));
+  this.load.image("up", require("../src/backsvg.png"));
+  this.load.image("left", require("../src/leftsvg.png"));
+  this.load.image("right", require("../src/right.png"));
  
 
 
@@ -132,199 +138,166 @@ function preload() {
 }
 
 function create() {
+  x = this.input.keyboard.addKey(
+    Phaser.Input.Keyboard.KeyCodes.SHIFT
+    // Enable boost mode
+   
+  );
   
-  
-   spaceBar = this.input.keyboard.addKey(
+  spaceBar = this.input.keyboard.addKey(
     Phaser.Input.Keyboard.KeyCodes.SPACE
-  );
-  lickexists = this.background2 = this.add.tileSprite(
-    0,
-    0,
-    this.game.config.width,
-    this.game.config.height,
-    "background2"
-  );
-  this.background2.setOrigin(0, 0);
-  this.background2.setTilePosition(0, 0);
-  this.input.setDefaultCursor("crosshair");
-  const background2 = this.add.image(450, 450, "pixel");
-  const background3 = this.add.image(450, 450, "pixel");
-  const background4 = this.add.image(450, 450, "observor");
-  const background = this.add.image(450, 450, "background");
-  background.setScale(
-    this.game.config.width / background.width,
-    this.game.config.height / background.height
-  );
-  background2.setScale(0.3)
-  background3.setScale(0.3)
-  background4.setScale(0.5)
-  background.setAlpha(0.45);
-  
-  topWall = this.physics.add.image(900 / 2, 100, "wall");
-  bottomrofl = this.physics.add.image(900 / 2, 800, "pinkrofl");
-  //bottomWall = this.physics.add.image(900 / 2, 800, "wall");
-  leftWall = this.physics.add.image(100, 900 / 2, "verticalwall");
-  rightWall = this.physics.add.image(800, 900 / 2, "verticalwall");
-  background2.x = leftWall.x - 60;
-  background2.y = leftWall.y;
-  background3.x = rightWall.x + 60;
-  background3.y = rightWall.y;
-  background4.x = topWall.x;
-  background4.y = topWall.y -60;
+ );
+ lickexists = this.background2 = this.add.tileSprite(
+   0,
+   0,
+   this.game.config.width,
+   this.game.config.height,
+   "background2"
+ );
+ this.background2.setOrigin(0, 0);
+ this.background2.setTilePosition(0, 0);
+ this.input.setDefaultCursor("crosshair");
+ const background2 = this.add.image(450, 450, "pixel");
+ const background3 = this.add.image(450, 450, "pixel");
+ const background4 = this.add.image(450, 450, "observor");
+ const background = this.add.image(450, 450, "background");
+ background.setScale(
+   this.game.config.width / background.width,
+   this.game.config.height / background.height
+ );
+ background2.setScale(0.3)
+ background3.setScale(0.3)
+ background4.setScale(0.5)
+ background.setAlpha(0.45);
  
 
-  goal1 = this.physics.add.image(topWall.x, topWall.y, "goal1");
-  goal1.setScale(0.48)
-  
-  //goal2 = this.physics.add.image(bottomWall.x, bottomWall.y, "goal");
-  goal3 = this.physics.add.image(leftWall.x, leftWall.y, "goal");
-  
-  goal4 = this.physics.add.image(rightWall.x, rightWall.y, "goal");
+
+
+
+
+ scoreText1 = this.add.text(16, 16, "Ship 1: 0", {
+   fontSize: "32px",
+   fill: "#FFF",
+ });
+ scoreText1.setText(`Observoor: ${score1}`);
+ scoreText2 = this.add.text(16, 48, "Ship 2: 0", {
+   fontSize: "32px",
+   fill: "#FFF",
+ });
+ scoreText2.setText(`Pixelstuds: ${score2}`);
+
+ // set the size of the wall images
  
-  scoreText1 = this.add.text(16, 16, "Ship 1: 0", {
-    fontSize: "32px",
-    fill: "#FFF",
-  });
-  scoreText1.setText(`Observoor: ${score1}`);
-  scoreText2 = this.add.text(16, 48, "Ship 2: 0", {
-    fontSize: "32px",
-    fill: "#FFF",
-  });
-  scoreText2.setText(`Pixelstuds: ${score2}`);
-
-  // set the size of the wall images
-  topWall.setScale(1.2);
-  bottomrofl.setScale(0.7);
-  leftWall.setScale(1.2);
-  rightWall.setScale(1.2);
-  topWall.setBounce(1);
-  bottomrofl.setBounce(1);
-  leftWall.setBounce(1);
-  rightWall.setBounce(1);
-  topWall.setImmovable(true);
-  bottomrofl.setImmovable(true);
-  leftWall.setImmovable(true);
-  rightWall.setImmovable(true);
-  goal1.setImmovable(true);
-  //goal2.setImmovable(true);
-  goal3.setImmovable(true);
-  goal4.setImmovable(true);
-
-
-  ship1 = this.physics.add.image(700, 700, "ship");
-  graphics = this.add.graphics();
-
-  ship1.setScale(0.35);
-  ship1.setCollideWorldBounds(true);
-  ship1.setBounce(1);
-  ship1.setDamping(2);
-  ship2 = this.physics.add.image(250, 250, "ship2");
-  ship2.setScale(0.55);
-  ship2.setCollideWorldBounds(true);
-  ship2.setBounce(1);
-  ship1.body.setDrag(0.9);
-  ship2.body.setDrag(0.9);
-  ship3 = this.physics.add.image(0, 0, "ship3");
-  ship3.setScale(0.55);
-  ship3.setCollideWorldBounds(true);
-  ship3.setBounce(1);
-  ship3.body.setDrag(0.9);
-  ship3.body.setDrag(0.9);
-  
-  this.physics.collide(ship1, topWall);
-  this.physics.collide(ship1, bottomrofl);
-  this.physics.collide(ship1, leftWall);
-  this.physics.collide(ship1, rightWall);
-  this.physics.collide(ship2, topWall);
-  this.physics.collide(ship2, bottomrofl);
-  this.physics.collide(ship2, leftWall);
-  this.physics.collide(ship2, rightWall);
-  this.physics.collide(ship3, topWall);
-  this.physics.collide(ship3, bottomrofl);
-  this.physics.collide(ship3, leftWall);
-  this.physics.collide(ship3, rightWall);
-
-  plasma = this.physics.add.image("plasma");
-  
+ ship1 = this.physics.add.image(700, 700, "left");
  
 
-  
 
-  boostAmountText = this.add.text(
-    config.width - 200,
-    config.height - 50,
-    `Boost: ${Math.round(boostAmount)}`,
-    { fontSize: "16px", fill: "#FFFFFF" }
-  );
-  
-  graphics = this.add.graphics();
+ ship1.setScale(1);
+ ship1.setCollideWorldBounds(true);
+ ship1.setBounce(1);
+ ship1.setDamping(2);
+ ship2 = this.physics.add.image(250, 250, "ship2");
+ ship2.setScale(0.55);
+ ship2.setCollideWorldBounds(true);
+ ship2.setBounce(1);
+ ship1.body.setDrag(0.9);
+ ship2.body.setDrag(0.9);
+ ship3 = this.physics.add.image(0, 0, "ship3");
+ ship3.setScale(0.55);
+ ship3.setCollideWorldBounds(true);
+ ship3.setBounce(1);
+ ship3.body.setDrag(0.9);
+ ship3.body.setDrag(0.9);
+ 
+ this.physics.collide(ship1, topWall);
+ this.physics.collide(ship1, bottomrofl);
+ this.physics.collide(ship1, leftWall);
+ this.physics.collide(ship1, rightWall);
+ this.physics.collide(ship2, topWall);
+ this.physics.collide(ship2, bottomrofl);
+ this.physics.collide(ship2, leftWall);
+ this.physics.collide(ship2, rightWall);
+ this.physics.collide(ship3, topWall);
+ this.physics.collide(ship3, bottomrofl);
+ this.physics.collide(ship3, leftWall);
+ this.physics.collide(ship3, rightWall);
 
-  // draw a circle on the graphics object
+ plasma = this.physics.add.image("plasma");
+ 
 
 
  
-  circle = new Phaser.Geom.Circle(ship1.x, ship1.y, ship1.width/2);
+
+ boostAmountText = this.add.text(
+   config.width - 200,
+   config.height - 50,
+   `Boost: ${Math.round(boostAmount)}`,
+   { fontSize: "16px", fill: "#FFFFFF" }
+ );
+ 
+
+
+ // draw a circle on the graphics object
+
+
+
+ circle = new Phaser.Geom.Circle(ship1.x, ship1.y, ship1.width/2);
 this.physics.add.existing(circle);
 circle.body.setCircle(circle.radius);
 this.add.existing(circle);
- 
-  ball = this.physics.add.image(450, 450, "ball");
-  ball.setScale(1.3)
-  ballCanShoot = false;
 
-  ball.setTint(0xff0000); // set ball to red
-  setTimeout(() => {
-    ball.clearTint();
-    ballCanShoot = true;
-  }, 3500);
+ ball = this.physics.add.image(450, 450, "ball");
+ ball.setScale(1)
+ ballCanShoot = false;
 
-  ball.setCollideWorldBounds(true);
-  ball.setBounce(0.7); // make the ball bounce off the walls
-  ball.body.onWorldBounds = function (ball) {
-    console.log("Game object has collided with world bounds!");
-    this.sound.play("ballcol1", { volume: 0.1 });
-  };
-  angle1 = Phaser.Math.Angle.Between(ball.x, ball.y, ship1.x, ship1.y);
 
-  // Set the rotation of ship1 to the calculated angle
-  ship1.setRotation(-angle1 - 90);
+ ball.setTint(0xff0000); // set ball to red
+ setTimeout(() => {
+   ball.clearTint();
+   ballCanShoot = true;
+ }, 3500);
 
-  // Calculate the angle between the ball and ship2
-  angle2 = Phaser.Math.Angle.Between(ball.x, ball.y, ship2.x, ship2.y);
+ ball.setCollideWorldBounds(true);
+ ball.setBounce(0.7); // make the ball bounce off the walls
+ ball.body.onWorldBounds = function (ball) {
+   console.log("Game object has collided with world bounds!");
+   this.sound.play("ballcol1", { volume: 0.1 });
+ };
 
-  // Set the rotation of ship2 to the calculated angle
-  ship2.setRotation(-angle2 - 90);
 
-  cursors = this.input.keyboard.createCursorKeys();
 
-  this.input.keyboard.on("keydown-SHIFT", function () {
-    // Enable boost mode
-    boost = true;
-  });
 
-  this.input.keyboard.on("keyup-SHIFT", function () {
-    // Disable boost mode
-    boost = false;
-  });
-  ball.body.onCollide = true;
-  ball.body.onCollideCallback = (collisionObject) => {
-    if (collisionObject.gameObject instanceof ship1) {
-        ball.body.applyImpulse(
-            new Phaser.Math.Vector2(-collisionObject.overlapX, -collisionObject.overlapY).normalize().scale(0.1)
-        );
-    }
+ this.input.keyboard.on("keydown-SHIFT", function () {
+  // Enable boost mode
+  boost = true;
+});
+
+ this.input.keyboard.on("keyup-SHIFT", function () {
+   // Disable boost mode
+   boost = false;
+ });
+ ball.body.onCollide = true;
+ ball.body.onCollideCallback = (collisionObject) => {
+   if (collisionObject.gameObject instanceof ship1) {
+       ball.body.applyImpulse(
+           new Phaser.Math.Vector2(-collisionObject.overlapX, -collisionObject.overlapY).normalize().scale(0.1)
+       );
+   }
 }
-ship1.body.setCircle(50);
+
+
+
 
 }
 
 function update() {
+  
 
   
   shipCircle = new Phaser.Geom.Circle(ship1.x, ship1.y, ship1.width / 2);
 
   
- ball.setVelocity(ball.body.velocity.x * 0.997, ball.body.velocity.y * 0.997);
+ ball.setVelocity(ball.body.velocity.x * 0.996, ball.body.velocity.y * 0.996);
  this.physics.collide(ship1, ball);
 
  this.physics.add.collider(ball, ship1, function () {
@@ -335,6 +308,13 @@ function update() {
   }
 });
 
+this.physics.add.collider(ball, ship1, function () {
+  if (x.isDown) {
+    let angle = Phaser.Math.Angle.Between(ship1.x, ship1.y, ball.x, ball.y);
+    angle += Math.PI;  // add 180 degrees to the angle to make it opposite direction
+    ball.body.setVelocity(-Math.cos(angle) * 100, -Math.sin(angle) * 100);
+  }
+});
   
   
   
@@ -435,17 +415,30 @@ function update() {
 
   if (wKey.isDown && shipmoving) {
     ship1.setVelocityY(-100);
+    ship1.setTexture('up');
+  
 } else if (sKey.isDown && shipmoving) {
     ship1.setVelocityY(100);
+    ship1.setTexture('down');
+   
 } else {
     ship1.setVelocityY(0);
+   
 }
   
 if (aKey.isDown && shipmoving) {
+  loffset = true
   ship1.setVelocityX(-100);
+  
+  ship1.setTexture('left');
+
+
 } else if (dKey.isDown && shipmoving) {
   ship1.setVelocityX(100);
+  ship1.setTexture('right');
+ 
 } else {
   ship1.setVelocityX(0);
+  
 }
 }
