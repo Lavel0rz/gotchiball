@@ -20,6 +20,8 @@ const config = {
   },
 };
 let x;
+let lineBody
+let graphics2
 let loffset = false
 let shipCircle
 let retainTimeout;
@@ -79,6 +81,7 @@ let bottomrofl;
 let leftWall;
 let rightWall;
 let topWall2;
+let goalLine
 let bottomWall2;
 let leftWall2;
 let laser;
@@ -96,6 +99,7 @@ let inverse_leftLine
 let inverse_leftLine2
 let lastCollidingShip;
 let tonguemitter;
+let goalLine2;
 let tongueparticles;
 let particles;
 let emitter;
@@ -299,14 +303,36 @@ inverse_leftLine2.body.setImmovable(true);
 
 
  
-ship1 = this.physics.add.image(700, 700, "observor");
+
 post = this.physics.add.image(config.width-20, config.height/2+80, 'wall');
 post2 = this.physics.add.image(config.width-20, config.height/2-80, 'wall');
-goal = this.physics.add.image(config.width-15, config.height/2-53, 'goal');
-goal = this.physics.add.image(config.width-15, config.height/2-20, 'goal');
-goal = this.physics.add.image(config.width-15, config.height/2+13, 'goal');
-goal = this.physics.add.image(config.width-15, config.height/2+46, 'goal');
-goal.setAlpha(0.6)
+let graphics2 = this.add.graphics();
+graphics2.lineStyle(35, 0x9400D3, 1); // set line thickness to 10, color to red, and alpha to 1
+graphics2.moveTo(config.width-10, config.height/2-68); // set starting point of line
+graphics2.lineTo(config.width-10, config.height/2+68); // set ending point of line
+graphics2.stroke(); // draw the line on the screen
+let graphics3 = this.add.graphics();
+graphics3.lineStyle(35, 0x9400D3, 1);
+graphics3.moveTo(10, config.height/2-68);
+graphics3.lineTo(10, config.height/2+68);
+graphics3.stroke();
+goalLine = this.add.image(30, config.height, 'line');
+goalLine.displayWidth = 1;
+goalLine.displayHeight = config.width;
+this.physics.add.existing(goalLine);
+goalLine.body.setImmovable(true);
+goalLine.alpha=0
+
+goalLine2 = this.add.image(config.width-30, 50, 'line');
+goalLine2.displayWidth = 1;
+goalLine2.displayHeight = config.width;
+this.physics.add.existing(goalLine2);
+goalLine2.body.setImmovable(true);
+goalLine2.alpha=0
+
+
+
+line = this.physics.add.staticImage(graphics2.generateTexture())
 post.setBounce(1)
 post.setImmovable(true)
 post2.setBounce(1)
@@ -314,17 +340,14 @@ post2.setImmovable(true)
 
 post3 = this.physics.add.image(20, config.height/2+80, 'wall');
 post4 = this.physics.add.image(20, config.height/2-80, 'wall');
-goal2 = this.physics.add.image(15, config.height/2-53, 'goal');
-goal2 = this.physics.add.image(15, config.height/2-20, 'goal');
-goal2 = this.physics.add.image(15, config.height/2+13, 'goal');
-goal2 = this.physics.add.image(15, config.height/2+46, 'goal');
-goal2.setAlpha(0.6)
+
+
 post3.setBounce(1)
 post3.setImmovable(true)
 post4.setBounce(1)
 post4.setImmovable(true)
 
-
+ ship1 = this.physics.add.image(700, 700, "observor");
  ship1.setScale(0.35);
  ship1.setCollideWorldBounds(true);
  ship1.setBounce(1);
@@ -346,7 +369,7 @@ post4.setImmovable(true)
 
 
 
- ball = this.physics.add.image(450, 450, "ball");
+ ball = this.physics.add.image(config.width/2, config.height/2, "ball");
  ball.setScale(1.25)
  ballCanShoot = false;
  ball.setCircle(10)
@@ -396,6 +419,13 @@ post4.setImmovable(true)
 }
 
 function update() {
+  this.physics.add.collider(ball, goalLine, respawnBall2, null, this);
+  this.physics.add.collider(ball, goalLine2, respawnBall1, null, this);
+ 
+
+
+    
+
   this.physics.add.collider(ball, topLine);
   this.physics.add.collider(ball, bottomLine);
   this.physics.add.collider(ball, rightLine);
@@ -442,21 +472,7 @@ this.physics.add.collider(ball, ship1, function () {
   
 
  
-  this.physics.world.on(
-    "worldbounds",
-    function (body) {
-      if (body.gameObject === ball && !ballCollidedWithWorldBounds) {
-        // ball has collided with the world bounds
-        this.sound.play("ballcol1", { volume: 0.1 });
-
-        ballCollidedWithWorldBounds = true;
-        setTimeout(() => {
-          ballCollidedWithWorldBounds = false;
-        }, 100);
-      }
-    },
-    this
-  );
+ 
   function respawnBall1() {
     canShoot = false;
    
@@ -492,20 +508,12 @@ this.physics.add.collider(ball, ship1, function () {
   
 
   this.physics.collide(ball, goal5);
-  this.physics.add.collider(ball, goal1, respawnBall1, null, this);
+  this.physics.add.collider(ball, goal, respawnBall1, null, this);
   //this.physics.add.collider(ball, goal2, respawnBall, null, this);
   this.physics.add.collider(ball, goal3, respawnBall2, null, this);
  
 
-  this.physics.collide(ball, topWall);
-
-  this.physics.collide(ball, bottomrofl);
-  this.physics.collide(ball, leftWall);
-  this.physics.collide(ball, rightWall);
-  this.physics.collide(ship1, topWall);
-  this.physics.collide(ship1, bottomrofl);
-  this.physics.collide(ship1, leftWall);
-  this.physics.collide(ship1, rightWall);
+;
 ;
 
 ;
