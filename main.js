@@ -114,43 +114,30 @@ let boost = false; // variable to track the boost value
 const velocityX = 0;
 const velocityY = 0;
 function preload() {
-  this.load.image("ship", require("../src/coderdan.png"));
-  this.load.image("ship2", require("../src/coderdan.png"));
-  this.load.image("ship3", require("../src/goldenxross.png"));
+
 
   this.load.image("ball", require("../src/balled2.png"));
-  this.load.image("particle", require("../src/fireball1.png"));
-  this.load.image("goal", require("../src/goal.png"));
+
+
   this.load.image("wall", require("../src/wall.png"));
-  this.load.image("verticalwall", require("../src/verticalwall.png"));
-  this.load.image("background", require("../src/nebula.png"));
-  this.load.audio("shooting", require("../src/shooting.wav"));
+
+
+
   this.load.audio("goalsound", require("../src/goalsound.wav"));
-  this.load.audio("boost", require("../src/boost.wav"));
-  this.load.audio("boost2", require("../src/boost2.wav"));
- 
-  this.load.audio("ballcol1", require("../src/ballcol.wav"));
 
-  this.load.image("arrow", require("../src/ghsttok.png"));
-  this.load.image("arrow2", require("../src/ghsttok.png"));
+
+
   this.load.image("background2", require("../src/background2.png"));
-  this.load.image("down", require("../src/downsvg.png"));
-  this.load.image("up", require("../src/backsvg.png"));
-  this.load.image("left", require("../src/leftsvg.png"));
-  this.load.image("right", require("../src/right.png"));
- 
 
 
 
 
-  
-  this.load.image("gun", require("../src/gun.png"));
-  this.load.image("plasma", require("../src/plamsaball.png"));
-  this.load.image("pixel", require("../src/pixelcraft.png"));
-  this.load.audio("plasmagun", require("../src/plasmagun.wav"));
-  this.load.image("goal1", require("../src/goal1.png"));
+
+
+
+
   this.load.image("observor", require("../src/observor2.png"));
-  this.load.image("pinkrofl", require("../src/rofl.png"));
+
 }
 
 function create() {
