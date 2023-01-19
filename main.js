@@ -70,7 +70,10 @@ let topWall;
 let bottomWall;
 let graphics;
 let post;
+let rightLine2
 let post2;
+let leftLine
+let rightLine
 let plasma;
 let bottomrofl;
 let leftWall;
@@ -82,14 +85,21 @@ let laser;
 let rightWall2;
 let goal
 let boostAmountText;
+let post3
+let post4
 let ball;
 let score1 = 0;
+let line
+let bottomLine
 let score2 = 0;
+let inverse_leftLine
+let inverse_leftLine2
 let lastCollidingShip;
 let tonguemitter;
 let tongueparticles;
 let particles;
 let emitter;
+let topLine
 let gun;
 let boostAmount = 200;
 let arrow3;
@@ -140,6 +150,7 @@ function preload() {
 }
 
 function create() {
+  //this.physics.world.createDebugGraphic();
 
 
 
@@ -163,6 +174,7 @@ function create() {
  this.background2.setTilePosition(0, 0);
  this.input.setDefaultCursor("crosshair");
  this.graphics = this.add.graphics();
+ 
  this.graphics.lineStyle(5, 0x9400D3, 1);
  this.graphics.beginPath();
  this.graphics.moveTo(50, 50);
@@ -179,6 +191,7 @@ function create() {
  this.graphics.lineTo(config.width-50, config.height - 50);
  this.graphics.closePath();
  this.graphics.stroke();
+ 
 
 
  scoreText1 = this.add.text(16, 16, "Ship 1: 0", {
@@ -218,9 +231,69 @@ this.graphics.lineStyle(5, 0x9400D3, 1);
 this.graphics.beginPath();
 this.graphics.moveTo(50, 50);
 this.graphics.lineTo(50, config.height-50);
+
 this.graphics.closePath();
 this.graphics.stroke();
+topLine = this.add.image(config.width/2, 50, 'line');
+topLine.displayWidth = config.width - 100;
+topLine.displayHeight = 1;
 
+// enable physics for the line
+this.physics.add.existing(topLine);
+
+// set the size of the physics body to match the line
+
+topLine.body.setImmovable(true);
+topLine.body.setAllowGravity(false);
+
+
+rightLine = this.add.image(config.width-50, config.height+240, 'line');
+rightLine.displayWidth = 1;
+rightLine.displayHeight = config.width-300;
+
+bottomLine = this.add.image(config.width/2, config.height - 50, 'bottomLine');
+bottomLine.displayWidth = config.width - 100;
+bottomLine.displayHeight = 1;
+
+
+this.physics.add.existing(rightLine);
+this.physics.add.existing(bottomLine);
+
+rightLine.body.setImmovable(true);
+bottomLine.body.setImmovable(true);
+topLine.alpha=0
+
+rightLine.alpha = 0;
+bottomLine.alpha=0;
+
+rightLine2 = this.add.image(config.width-50, 50, 'line');
+rightLine2.displayWidth = 1;
+rightLine2.displayHeight = config.height - 250;
+
+this.physics.add.existing(rightLine2);
+rightLine2.body.setImmovable(true);
+rightLine2.alpha = 0
+
+inverse_leftLine = this.add.image(50, config.height+240, 'line');
+inverse_leftLine.displayWidth = 1;
+inverse_leftLine.displayHeight = config.width-300;
+
+inverse_leftLine2 = this.add.image(50, 50, 'line');
+inverse_leftLine2.displayWidth = 1;
+inverse_leftLine2.displayHeight = config.height - 250;
+
+
+inverse_leftLine.alpha= 0
+inverse_leftLine2.alpha = 0
+this.physics.add.existing(inverse_leftLine);
+this.physics.add.existing(inverse_leftLine2);
+inverse_leftLine.body.setImmovable(true);
+inverse_leftLine2.body.setImmovable(true);
+
+
+
+
+ 
 
 
 
@@ -239,6 +312,18 @@ post.setImmovable(true)
 post2.setBounce(1)
 post2.setImmovable(true)
 
+post3 = this.physics.add.image(20, config.height/2+80, 'wall');
+post4 = this.physics.add.image(20, config.height/2-80, 'wall');
+goal2 = this.physics.add.image(15, config.height/2-53, 'goal');
+goal2 = this.physics.add.image(15, config.height/2-20, 'goal');
+goal2 = this.physics.add.image(15, config.height/2+13, 'goal');
+goal2 = this.physics.add.image(15, config.height/2+46, 'goal');
+goal2.setAlpha(0.6)
+post3.setBounce(1)
+post3.setImmovable(true)
+post4.setBounce(1)
+post4.setImmovable(true)
+
 
  ship1.setScale(0.35);
  ship1.setCollideWorldBounds(true);
@@ -246,11 +331,6 @@ post2.setImmovable(true)
  ship1.setDamping(2);
  ship1.setCircle(60)
 
- 
- this.physics.collide(ship1, topWall);
- this.physics.collide(ship1, bottomrofl);
- this.physics.collide(ship1, leftWall);
- this.physics.collide(ship1, rightWall);
 
 
  plasma = this.physics.add.image("plasma");
@@ -265,10 +345,6 @@ post2.setImmovable(true)
 
 
 
- circle = new Phaser.Geom.Circle(ship1.x, ship1.y, ship1.width/2);
-this.physics.add.existing(circle);
-circle.body.setCircle(circle.radius);
-this.add.existing(circle);
 
  ball = this.physics.add.image(450, 450, "ball");
  ball.setScale(1.25)
@@ -316,13 +392,25 @@ this.add.existing(circle);
 
 
 
+
 }
 
 function update() {
+  this.physics.add.collider(ball, topLine);
+  this.physics.add.collider(ball, bottomLine);
+  this.physics.add.collider(ball, rightLine);
+  this.physics.add.collider(ball, inverse_leftLine);
+  this.physics.add.collider(ball, inverse_leftLine2);
+
+  this.physics.add.collider(ball, rightLine2);
   this.physics.collide(ship1, post);
   this.physics.collide(ship1, post2);
   this.physics.collide(post, ball);
   this.physics.collide(post2, ball);
+  this.physics.collide(ship1, post3);
+  this.physics.collide(ship1, post4);
+  this.physics.collide(post3, ball);
+  this.physics.collide(post4, ball);
   let shiftKey = this.input.keyboard.addKey(
     Phaser.Input.Keyboard.KeyCodes.SHIFT
   );
