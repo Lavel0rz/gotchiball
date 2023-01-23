@@ -35,6 +35,7 @@ let collisionCounter = 0;
 let canShoot = false;
 let pointer;
 let sound;
+let spinInterval;
 let shootTimer;
 let BOUNCE_FORCE = 500;
 let angle1;
@@ -49,6 +50,7 @@ let scoreText2;
 let shipmoving = true;
 let shipmoving2 = true;
 let min = 1;
+let lastUsedTime = 0;
 let min2 = 200;
 let spaceBar;
 let max = 360;
@@ -115,21 +117,21 @@ let boost = false; // variable to track the boost value
 const velocityX = 0;
 const velocityY = 0;
 function preload() {
-  this.load.image("ball", require("../src/balled2.png"));
+  this.load.image("ball", require("./balled2.png"));
 
-  this.load.image("wall", require("../src/wall.png"));
+  this.load.image("wall", require("./wall.png"));
 
-  this.load.audio("goalsound", require("../src/goalsound.wav"));
-  this.load.audio("ballcol", require("../src/ballcollision.wav"));
 
-  this.load.image("background2", require("../src/background2.png"));
 
-  this.load.image("observor", require("../src/observor2.png"));
+
+  this.load.image("background2", require("./background2.png"));
+
+  this.load.image("observor", require("./observor2.png"));
 }
 
 function create() {
   let sound = this;
- 
+
   //this.physics.world.createDebugGraphic();
 
   x = this.input.keyboard.addKey(
@@ -241,7 +243,7 @@ function create() {
 
   rightLine2 = this.add.image(config.width - 50, 50, "line");
   rightLine2.displayWidth = 1;
-  rightLine2.displayHeight = config.height - 250;
+  rightLine2.displayHeight = config.height - 300;
 
   this.physics.add.existing(rightLine2);
   rightLine2.body.setImmovable(true);
@@ -253,7 +255,7 @@ function create() {
 
   inverse_leftLine2 = this.add.image(50, 50, "line");
   inverse_leftLine2.displayWidth = 1;
-  inverse_leftLine2.displayHeight = config.height - 250;
+  inverse_leftLine2.displayHeight = config.height - 300;
 
   inverse_leftLine.alpha = 0;
   inverse_leftLine2.alpha = 0;
@@ -264,23 +266,23 @@ function create() {
 
   post = this.physics.add.image(
     config.width - 20,
-    config.height / 2 + 80,
+    config.height / 2 + 100,
     "wall"
   );
   post2 = this.physics.add.image(
     config.width - 20,
-    config.height / 2 - 80,
+    config.height / 2 - 100,
     "wall"
   );
   let graphics2 = this.add.graphics();
   graphics2.lineStyle(35, 0x9400d3, 1); // set line thickness to 10, color to red, and alpha to 1
-  graphics2.moveTo(config.width - 10, config.height / 2 - 68); // set starting point of line
-  graphics2.lineTo(config.width - 10, config.height / 2 + 68); // set ending point of line
+  graphics2.moveTo(config.width - 10, config.height / 2 - 88); // set starting point of line
+  graphics2.lineTo(config.width - 10, config.height / 2 + 88); // set ending point of line
   graphics2.stroke(); // draw the line on the screen
   let graphics3 = this.add.graphics();
   graphics3.lineStyle(35, 0x9400d3, 1);
-  graphics3.moveTo(10, config.height / 2 - 68);
-  graphics3.lineTo(10, config.height / 2 + 68);
+  graphics3.moveTo(10, config.height / 2 - 88);
+  graphics3.lineTo(10, config.height / 2 + 88);
   graphics3.stroke();
   goalLine = this.add.image(30, config.height, "line");
   goalLine.displayWidth = 1;
@@ -302,8 +304,8 @@ function create() {
   post2.setBounce(1);
   post2.setImmovable(true);
 
-  post3 = this.physics.add.image(20, config.height / 2 + 80, "wall");
-  post4 = this.physics.add.image(20, config.height / 2 - 80, "wall");
+  post3 = this.physics.add.image(20, config.height / 2 + 100, "wall");
+  post4 = this.physics.add.image(20, config.height / 2 - 100, "wall");
 
   post3.setBounce(1);
   post3.setImmovable(true);
@@ -328,8 +330,8 @@ function create() {
 
 
   ball.setCollideWorldBounds(true);
-  ball.setBounce(0.7); // make the ball bounce off the walls
- 
+  ball.setBounce(0.5); // make the ball bounce off the walls
+
 
   ball.body.onCollide = true;
   ball.body.onCollideCallback = (collisionObject) => {
@@ -347,9 +349,12 @@ function create() {
 }
 
 function update() {
+
+  let currentTime = Date.now(); 
+
   this.physics.add.collider(ball, goalLine, respawnBall2, null, this);
   this.physics.add.collider(ball, goalLine2, respawnBall1, null, this);
- 
+
 
   this.physics.add.collider(ball, topLine);
   this.physics.add.collider(ball, bottomLine);
@@ -369,20 +374,43 @@ function update() {
   let shiftKey = this.input.keyboard.addKey(
     Phaser.Input.Keyboard.KeyCodes.SHIFT
   );
+  if (shiftKey.isDown && currentTime - lastUsedTime > 5000) {
+    ship1.setAccelerationX(ship1.body.velocity.x * 60);
+    ship1.setAccelerationY(ship1.body.velocity.y * 60);
+    lastUsedTime = currentTime;
+    spinInterval = setInterval(() => {
+      ship1.angle += 15;
+    }, 50);
+    setTimeout(() => {
+      ship1.setAccelerationX(0);
+      ship1.setAccelerationY(0);
+      clearInterval(spinInterval);
+      ship1.angle = 0;
+    }, 1200);
+  }
 
-  shipCircle = new Phaser.Geom.Circle(ship1.x, ship1.y, ship1.width / 2);
-
-  ball.setVelocity(ball.body.velocity.x * 0.996, ball.body.velocity.y * 0.996);
+  ball.setVelocity(ball.body.velocity.x * 0.990, ball.body.velocity.y * 0.990);
   this.physics.collide(ship1, ball);
+  if (spaceBar.isDown){
+    ship1.setTint(0xFFFF00);
+    setTimeout(() => {
+      ship1.clearTint();
+    }, 100);
+  }
 
-  this.physics.add.collider(ball, ship1, ()=> {
+  this.physics.add.collider(ball, ship1, () => {
     if (spaceBar.isDown) {
-      this.sound.play("ballcol", { volume: 0.2 });
-        let angle = Phaser.Math.Angle.Between(ship1.x, ship1.y, ball.x, ball.y);
-        angle += Math.PI; // add 180 degrees to the angle to make it opposite direction
-        ball.body.setVelocity(-Math.cos(angle) * 500, -Math.sin(angle) * 500);
+      let angle = Phaser.Math.Angle.Between(ship1.x, ship1.y, ball.x, ball.y);
+      angle += Math.PI; // add 180 degrees to the angle to make it opposite direction
+      ball.body.setVelocity(-Math.cos(angle) * 500, -Math.sin(angle) * 500);
+      
     }
-});
+    if (shiftKey.isDown) {
+      let angle = Phaser.Math.Angle.Between(ship1.x, ship1.y, ball.x, ball.y);
+      angle += Math.PI; // add 180 degrees to the angle to make it opposite direction
+      ball.body.setVelocity(-Math.cos(angle) * 200, -Math.sin(angle) * 200);
+    }
+  });
 
   function respawnBall1() {
     canShoot = false;
@@ -394,7 +422,7 @@ function update() {
     ball.y = game.config.height / 2;
     ball.setVelocity(0);
     ball.setTint(0xff0000); // set ball to red
-    this.sound.play("goalsound", { volume: 0.2 });
+
     console.log("ballrespawning");
     this.scene.restart();
     ball.setTint(0xff0000);
@@ -409,7 +437,7 @@ function update() {
     ball.y = game.config.height / 2;
     ball.setVelocity(0);
     ball.setTint(0xff0000); // set ball to red
-    this.sound.play("goalsound", { volume: 0.2 });
+
     console.log("ballrespawning");
     this.scene.restart();
     ball.setTint(0xff0000);
@@ -437,3 +465,4 @@ function update() {
     ship1.setVelocityX(0);
   }
 }
+
