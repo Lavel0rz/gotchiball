@@ -15,6 +15,7 @@ Fun project I made for fun with the assistance of ChatGPT with no prior knowledg
 ## Main To Dos:
 
 * Refactor / Optimize code
+* Refactor files ( assets, scripts, server files) 
 * Since it's all client based, remake into Authoritative Server Logic
 * Multiplayer / Web3 implementation (6 max player rooms 3v3 soccer idea)
 * Fix bugs like when you travel with the ball to the goal instead of shooting it you score more than one goal for some reason
