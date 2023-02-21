@@ -1,0 +1,31 @@
+{
+    "type": "module",
+    "name": "Gships",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+      "start": "parcel index.html",
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "build": "cp -R ./src ./dist && parcel build index.html"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "matter-js": "^0.18.0",
+      "parcel-bundler": "^1.12.5",
+      "phaser": "^3.55.2",
+      "clean-webpack-plugin": "^3.0.0",
+      "html-webpack-plugin": "^4.3.0",
+      "node-fetch": "^2.6.1",
+
+      "phaser3-rex-plugins": "^1.1.19",
+      "regenerator-runtime": "^0.13.5",
+      "terser-webpack-plugin": "^3.0.6",
+      "webpack": "^4.43.0",
+      "webpack-merge": "^4.2.2"
+
+    
+      
+    }
+  }
