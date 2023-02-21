@@ -11,7 +11,7 @@ To get a copy up and running follow these simple example steps:-
 
 Fun project I made for fun with the assistance of ChatGPT with no prior knowledge of node or javascript, so you can see a lot of errors in my code
 
-##Main To Dos:
+## Main To Dos:
 
 * Refactor / Optimize code
 * Since it's all client based, remake into Authoritative Server Logic
