@@ -1,5 +1,7 @@
 # gotchiball
 
-npm install
+To get a copy up and running follow these simple example steps:-
 
-npm run start
+Clone repo to your local machine.
+Run: npm install
+Run: npm start
