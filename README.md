@@ -1,6 +1,6 @@
 # Gotchiball
 
-![Gotchiball game](gotchiball.png)
+![Gotchiball game](gotchiball.gif)
 
 ## Gettin Started
 To get a copy up and running follow these simple example steps:-
